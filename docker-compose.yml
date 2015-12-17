@@ -2,7 +2,7 @@
 # http://sebgoa.blogspot.com/2015/03/1-command-to-mesos-with-docker-compose.html
 
 mesosmaster:
-  image: mesosphere/mesos-master:0.25.0-0.2.70.ubuntu1404
+  image: mesosphere/mesos-master:0.26.0-0.2.145.ubuntu1404
   ports:
     - "5050:5050"
   links:
@@ -15,7 +15,7 @@ mesosmaster:
     - MESOS_CLUSTER=Local Cluster
 
 mesosslave:
-  image: mesosphere/mesos-slave:0.25.0-0.2.70.ubuntu1404
+  image: mesosphere/mesos-slave:0.26.0-0.2.145.ubuntu1404
   ports:
     - "5051:5051"
   privileged: true
