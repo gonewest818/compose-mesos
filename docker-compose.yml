@@ -5,26 +5,44 @@ mesosmaster:
   image: mesosphere/mesos-master:${MESOS_VERSION}
   ports:
     - "5050:5050"
+  environment:
+    - MESOS_WORK_DIR=/var/lib/mesos
+    - MESOS_CLUSTER=Local Cluster
+
+mesosmaster_ha:
+  extends:
+    service: mesosmaster
   links:
     - zookeeper:zk
   environment:
     - MESOS_ZK=zk://zk:2181/mesos
     - MESOS_QUORUM=1
-    - MESOS_WORK_DIR=/var/lib/mesos
-    - MESOS_CLUSTER=Local Cluster
 
 mesosslave:
   image: mesosphere/mesos-slave:${MESOS_VERSION}
   ports:
     - "5051:5051"
   privileged: true
-  links:
-    - zookeeper:zk
-    - mesosmaster:master
   environment:
-    - MESOS_MASTER=zk://zk:2181/mesos
     - MESOS_WORK_DIR=/var/lib/mesos
     - MESOS_LOGGING_LEVEL=INFO
+
+mesosslave_nonha:
+  extends:
+    service: mesosslave
+  links:
+    - mesosmaster:master
+  environment:
+    - MESOS_MASTER=master:5050
+
+mesosslave_ha:
+  extends:
+    service: mesosslave
+  links:
+    - mesosmaster_ha:master
+    - zookeeper:zk
+  environment:
+    - MESOS_MASTER=zk://zk:2181/mesos
 
 zookeeper:
   build: zk
@@ -37,9 +55,24 @@ marathon:
   image: mesosphere/marathon:${MARATHON_VERSION}
   ports:
     - "8080:8080"
+
+marathon_nonha:
+  extends:
+    service: marathon
   links:
-    - zookeeper:zk
     - mesosmaster:master
+    - zookeeper:zk
+  environment:
+    - MARATHON_DISABLE_HA=
+    - MARATHON_MASTER=master:5050
+    - MARATHON_ZK=zk://zk:2181/marathon
+
+marathon_ha:
+  extends:
+    service: marathon
+  links:
+    - mesosmaster_ha:master
+    - zookeeper:zk
   environment:
     - MARATHON_MASTER=zk://zk:2181/mesos
     - MARATHON_ZK=zk://zk:2181/marathon
