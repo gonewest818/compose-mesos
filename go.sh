@@ -33,5 +33,5 @@ SERVICES="mesosslave${MESOS_HA} "
 if [ $MARATHON -eq 1 ]; then SERVICES+="marathon${MESOS_HA}"; fi
 
 docker-compose up -d $SERVICES
-docker-compose logs
+docker-compose logs -f
 

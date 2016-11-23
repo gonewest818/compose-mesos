@@ -1,14 +1,14 @@
 # inspired by https://hub.docker.com/r/jplock/zookeeper/~/dockerfile/
 
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y openjdk-7-jre-headless wget
-RUN wget -q -O - http://www.us.apache.org/dist/zookeeper/zookeeper-3.4.8/zookeeper-3.4.8.tar.gz | tar -xzf - -C /opt \
-    && mv /opt/zookeeper-3.4.8 /opt/zookeeper \
+RUN apt-get update && apt-get install -y openjdk-8-jre-headless wget
+RUN wget -q -O - http://www.us.apache.org/dist/zookeeper/zookeeper-3.4.9/zookeeper-3.4.9.tar.gz | tar -xzf - -C /opt \
+    && mv /opt/zookeeper-3.4.9 /opt/zookeeper \
     && cp /opt/zookeeper/conf/zoo_sample.cfg /opt/zookeeper/conf/zoo.cfg \
     && mkdir -p /tmp/zookeeper
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 EXPOSE 2181 2888 3888
 
